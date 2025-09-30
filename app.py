@@ -160,6 +160,9 @@ def decode_protobuf(binary):
     except Exception as e:
         app.logger.error(f"Unexpected error during protobuf decoding: {e}")
         return None
+        @app.route('/')
+def home():
+    return render_template('1234.html')
 
 @app.route('/like', methods=['GET'])
 def handle_requests():
