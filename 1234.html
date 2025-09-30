@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Fire Like Adder</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; width: 90%; max-width: 400px; }
+        h1 { color: #333; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        input, select { padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; }
+        button { padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s; }
+        button:hover { background-color: #0056b3; }
+        #result { margin-top: 20px; text-align: left; background-color: #e9ecef; padding: 15px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
+        .loader { display: none; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Free Fire Like Adder</h1>
+        <form id="like-form">
+            <input type="text" id="uid" placeholder="Enter Player UID" required>
+            <select id="server" required>
+                <option value="" disabled selected>Select Server</option>
+                <option value="IND">India (IND)</option>
+                <option value="BR">Brazil (BR)</option>
+                <option value="BD">Bangladesh (BD)</option>
+                <option value="US">USA (US)</option>
+            </select>
+            <button type="submit">Send Likes</button>
+        </form>
+        <div id="loader" class="loader">Processing... Please wait.</div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('like-form');
+        const resultDiv = document.getElementById('result');
+        const loader = document.getElementById('loader');
+
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault(); // ফর্ম সাবমিট হলে পেজ রিলোড হওয়া আটকায়
+
+            const uid = document.getElementById('uid').value;
+            const server = document.getElementById('server').value;
+            const apiKey = 'ghost_modx'; // আপনার API কী
+
+            // API URL তৈরি করা
+            const apiUrl = `/like?uid=${uid}&server_name=${server}&key=${apiKey}`;
+
+            resultDiv.textContent = '';
+            loader.style.display = 'block'; // লোডার দেখানো হচ্ছে
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (response.ok) {
+                    let formattedResult = `
+Player Name: ${data.PlayerNickname}
+UID: ${data.UID}
+Status: ${data.status === 1 ? 'Success' : 'Failed'}
+Likes Before: ${data.LikesbeforeCommand}
+Likes After: ${data.LikesafterCommand}
+Likes Given: ${data.LikesGivenByAPI}
+                    `;
+                    resultDiv.textContent = formattedResult;
+                } else {
+                    resultDiv.textContent = `Error: ${data.error || 'Something went wrong'}`;
+                }
+            } catch (error) {
+                resultDiv.textContent = 'An error occurred. Check the console for details.';
+                console.error('Fetch Error:', error);
+            } finally {
+                loader.style.display = 'none'; // লোডার লুকানো হচ্ছে
+            }
+        });
+    </script>
+</body>
+</html>
